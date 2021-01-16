@@ -1,10 +1,14 @@
 'use strict';
 import express from 'express';
+import fs from 'fs';
+import path from 'path';
 import query from '../db/query';
 import bcrypt from 'bcrypt';
-import pool from '../db/connection';
+import jwt from 'jsonwebtoken';
 
 const router = express.Router();
+
+const privateKey = fs.readFileSync(path.join(__dirname, '..', 'keys', 'private.key')).toString();
 
 router.post('/register', (req, res, next) => {
     // Register user
@@ -50,7 +54,24 @@ router.post('/login', async (req, res, next) => {
         } else {
             let row = rows[0];
             let hash = row['password'];
-            // TODO: continue tomorrow
+            bcrypt.compare(password, hash).then((verdict) => {
+                if (verdict !== true) {
+                    res.sendStatus(400).end();
+                }
+                // Password matches
+                const token = jwt.sign({
+                    username: username,
+                    permissions: row['permissions']
+                }, privateKey, {
+                    algorithm: 'RS256',
+                    expiresIn: '1d'
+                });
+                res.json({
+                    token: token
+                });
+            }).catch((err) => {
+                res.sendStatus(500).end();
+            })
         }
     } catch (err) {
         next(err);

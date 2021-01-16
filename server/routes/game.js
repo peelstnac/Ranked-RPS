@@ -1,8 +1,13 @@
 'use strict';
 import express from 'express';
 import { v4 as uuidv4 } from 'uuid';
+import fs from 'fs';
+import path from 'path';
+import jwt from 'jsonwebtoken';
 
 const router = express.Router();
+
+const publicKey = fs.readFileSync(path.join(__dirname, '..', 'keys', 'public.key')).toString();
 
 let openGames = [];
 let fullGames = [];
@@ -13,6 +18,25 @@ class Game {
         this.players = players;
     }
 }
+
+// Middleware to verify if authorized
+router.use('/', (req, res, next) => {
+    let header = req.header('Authorization');
+    if (typeof header !== 'string') {
+        res.sendStatus(401).end();
+    }
+    let split = header.split(' ');
+    if (split.length < 2) {
+        res.sendStatus(401).end();
+    }
+    try {
+        let user = jwt.verify(split[1], publicKey);
+        req.user = user;
+        next();
+    } catch (err) {
+        res.sendStatus(401).end();
+    }
+});
 
 router.post('/join', (req, res) => {
     if (openGames.length !== 0) {

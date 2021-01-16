@@ -31,9 +31,11 @@ process.stdin.resume();
 const exitHandler = () => {
     try {
         pool.end();
+        console.log('Pool ended.')
     } catch (err) {
         // Do nothing
     }
+
     process.exit();
 };
 
