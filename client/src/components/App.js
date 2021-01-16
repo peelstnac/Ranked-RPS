@@ -6,18 +6,21 @@ import {
 import './App.css';
 import Navigation from './Navigation/Navigation';
 import Home from './Home/Home';
+import Authentication from './Authentication/Authentication';
 
 const App = () => {
     return (
-        <Switch>
-            <Route exact path="/">
-                <div className="app-container">
-                    <Navigation />
+        <div className="app-container">
+            <Navigation />
+            <Switch>
+                <Route exact path="/">
                     <Home />
-                </div>
-            </Route>
-        </Switch>
-
+                </Route>
+                <Route exact path="/login">
+                    <Authentication />
+                </Route>
+            </Switch>
+        </div>
     );
 };
 

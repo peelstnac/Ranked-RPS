@@ -6,14 +6,14 @@
   color: white;
 }
 
-.navigation-items {
+.navigation-item {
   display: flex;
   box-sizing: border-box;
   align-items: center;
   padding: 0.5em;
 }
 
-.navigation-items a {
+.navigation-item a {
   color: white;
   font-family: "Roboto", monospace;
   font-size: 18px;
