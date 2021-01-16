@@ -1,0 +1,23 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@300");
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --blue-1: #00a6fb;
+  --blue-2: #0582ca;
+  --blue-3: #006494;
+  --blue-4: #003554;
+  --blue-5: #051923;
+}
+
+.app-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100vw;
+  height: 100vh;
+}
