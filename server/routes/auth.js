@@ -9,6 +9,27 @@ import jwt from 'jsonwebtoken';
 const router = express.Router();
 
 const privateKey = fs.readFileSync(path.join(__dirname, '..', 'keys', 'private.key')).toString();
+const publicKey = fs.readFileSync(path.join(__dirname, '..', 'keys', 'public.key')).toString();
+
+router.get('/status', (req, res) => {
+    let header = req.header('Authorization');
+    if (typeof header !== 'string') {
+        res.status(200).json({ status: false });
+    }
+    let split = header.split(' ');
+    if (split.length < 2) {
+        res.status(200).json({ status: false });
+    }
+    try {
+        let user = jwt.verify(split[1], publicKey);
+        res.status(200).json({
+            status: true,
+            user: user
+        });
+    } catch (err) {
+        res.status(200).json({ status: false });
+    }
+});
 
 router.post('/register', (req, res, next) => {
     // Register user
@@ -43,6 +64,7 @@ router.post('/login', async (req, res, next) => {
     // Authenticate user
     try {
         let { username, password } = req.body.credentials;
+
         // Search for username in database
         let text = 'SELECT * FROM auth WHERE username=$1';
         let values = [username];
@@ -66,7 +88,7 @@ router.post('/login', async (req, res, next) => {
                     algorithm: 'RS256',
                     expiresIn: '1d'
                 });
-                res.json({
+                res.status(200).json({
                     token: token
                 });
             }).catch((err) => {
