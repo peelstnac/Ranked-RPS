@@ -7,6 +7,7 @@ import './App.css';
 import Navigation from './Navigation/Navigation';
 import Home from './Home/Home';
 import Authentication from './Authentication/Authentication';
+import Lobby from './Lobby/Lobby';
 
 const App = () => {
     return (
@@ -18,6 +19,9 @@ const App = () => {
                 </Route>
                 <Route exact path="/login">
                     <Authentication />
+                </Route>
+                <Route path="/lobby">
+                    <Lobby />
                 </Route>
             </Switch>
         </div>
