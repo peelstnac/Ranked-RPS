@@ -20,7 +20,7 @@ const App = () => {
                 <Route exact path="/login">
                     <Authentication />
                 </Route>
-                <Route path="/lobby">
+                <Route path="/lobby/:gameId">
                     <Lobby />
                 </Route>
             </Switch>

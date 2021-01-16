@@ -1,10 +1,12 @@
 import React from 'react';
 import './Home.css';
+import './HomeBattleButton';
+import HomeBattleButton from './HomeBattleButton';
 
 const Home = () => {
     return (
         <div className="home-container">
-            <h1>Home</h1>
+            <HomeBattleButton />;
         </div>
     );
 };

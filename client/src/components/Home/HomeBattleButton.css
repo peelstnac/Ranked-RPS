@@ -1,0 +1,22 @@
+.home-battle-button-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-50%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 500px;
+  height: 500px;
+  border: 5px black solid;
+  border-radius: 50%;
+}
+
+.home-battle-button-container:hover {
+  cursor: pointer;
+}
+
+.home-battle-button-container > p {
+  font-family: "Roboto", monospace;
+  font-size: 24px;
+}
