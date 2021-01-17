@@ -20,7 +20,7 @@ const io = sio(server, { path: '/lobby/socket.io' });
 // Express
 
 app.use(express.json());
-app.use(express.static(path.join(__dirname, '..', 'client', 'build', 'static')));
+app.use(express.static(path.join(__dirname, '..', 'client', 'build')));
 
 app.use('/auth', auth);
 app.use('/lobby', lobby);
