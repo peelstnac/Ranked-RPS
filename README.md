@@ -4,13 +4,7 @@ My Hack the Northeast Beyond 2021 submission.
 
 ## Description
 
-Every year, the [Rock Paper Scissors World Championship](https://www.wrpsa.com/rock-paper-scissors-world-championship/) gets held. But how exactly do competitors practice? Doing a quick google search of ["rock paper scissors club"](https://www.google.com/search?q=rock+paper+scissors+club) yields disappointing results. There isn't a good way for competitors to practice against many others. Therefore, I created Ranked RPS: a web application that facilitates ranked matches of rock paper scissors.
-
-Some features include:
-
-- Fast matchmaking.
-- Elo system.
-- Leaderboards.
+Every year, enthusiasts gather at the [Rock Paper Scissors World Championship](https://www.wrpsa.com/rock-paper-scissors-world-championship/) to test their mettle. But how exactly do competitors practice against opponents of similar skill? A quick Google search for ["competitive rock paper scissors practice"](https://www.google.com/search?q=competitive+rock+paper+scissors+practice&oq=competitive+rock+paper+scissors+practice) yields lackluster results. Although there are various websites which offer mutiplayer games, **none are targeted towards competitive players.** Therefore, I created Ranked RPS: a web application that facilitates ranked rock paper scissors matches. It features **quick matchmaking,** **a simple elo system,** and **ranked leaderboards.**
 
 ## Deployment
 
