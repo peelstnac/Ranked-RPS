@@ -37,21 +37,30 @@ router.post('/register', (req, res, next) => {
         let { username, password } = req.body.credentials;
         // Check validity of credentials
         if (typeof username !== 'string' || typeof password !== 'string') {
-            res.sendStatus(400).end();
+            res.status(400).end();
         } else if (username.length === 0 || password.length === 0) {
-            res.sendStatus(400).end();
+            res.status(400).end();
         } else {
             // Valid
             const saltRounds = 10;
             bcrypt.hash(password, saltRounds).then(async (hash) => {
                 // Save credentials to database
+
+                // FIRST QUERY
                 let text = 'INSERT INTO auth(username, password) VALUES($1, $2) RETURNING *';
                 let values = [username, hash];
                 let [err, rows] = await query(text, values);
+
+                // SECOND QUERY
+                text = 'INSERT INTO data(username, rating, wins, losses) VALUES($1, $2, $3, $4) RETURNING *';
+                values = [username, 1500, 0, 0];
+                [err, rows] = await query(text, values);
+
                 if (err) {
-                    res.sendStatus(500).end();
+                    console.log(err);
+                    res.status(500).end();
                 } else {
-                    res.sendStatus(200).end();
+                    res.status(200).end();
                 }
             });
         }
@@ -70,15 +79,15 @@ router.post('/login', async (req, res, next) => {
         let values = [username];
         let [err, rows] = await query(text, values);
         if (err) {
-            res.sendStatus(500).end();
+            res.status(500).end();
         } else if (rows.length === 0) {
-            res.sendStatus(400).end();
+            res.status(400).end();
         } else {
             let row = rows[0];
             let hash = row['password'];
             bcrypt.compare(password, hash).then((verdict) => {
                 if (verdict !== true) {
-                    res.sendStatus(400).end();
+                    res.status(400).end();
                 }
                 // Password matches
                 const token = jwt.sign({
@@ -92,7 +101,7 @@ router.post('/login', async (req, res, next) => {
                     token: token
                 });
             }).catch((err) => {
-                res.sendStatus(500).end();
+                res.status(500).end();
             })
         }
     } catch (err) {

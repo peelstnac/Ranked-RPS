@@ -1,3 +1,49 @@
+import query from './db/query';
+
+// Winner takes 10% of Loser's rating rounded down
+const handleStatsUpdate = async (winnerUsername, loserUsername) => {
+    console.log(winnerUsername);
+    console.log(loserUsername);
+
+    let text = 'SELECT * FROM data WHERE username=$1';
+    let values = [winnerUsername];
+    let [err, winnerStats] = await query(text, values);
+
+    values = [loserUsername];
+    let [err2, loserStats] = await query(text, values);
+
+    if (err || err2) {
+        console.log(err, err2);
+        return false;
+    }
+
+    winnerStats = winnerStats[0];
+    loserStats = loserStats[0];
+
+    winnerStats['rating'] = Number(winnerStats['rating']);
+    winnerStats['wins'] = Number(winnerStats['wins']);
+    winnerStats['losses'] = Number(winnerStats['losses']);
+    loserStats['rating'] = Number(loserStats['rating']);
+    loserStats['wins'] = Number(loserStats['wins']);
+    loserStats['losses'] = Number(loserStats['losses']);
+
+    let ratingTaken = Math.floor(loserStats['rating'] / 10);
+
+    // Update
+    text = 'UPDATE data SET rating=$1, wins=$2, losses=$3 WHERE username=$4 RETURNING *';
+
+    values = [winnerStats['rating'] + ratingTaken, winnerStats['wins'] + 1, winnerStats['losses'], winnerStats['username']];
+    [err, winnerStats] = await query(text, values);
+
+    values = [loserStats['rating'] - ratingTaken, loserStats['wins'], loserStats['losses'] + 1, loserStats['username']];
+    [err2, loserStats] = await query(text, values);
+
+    if (err || err2) {
+        console.log(err, err2);
+        return false;
+    }
+};
+
 const startGame = (game, io) => {
     if (process.env.NODE_ENV === 'development') {
         console.log(`Game ${game['id']} is starting.`);
@@ -16,7 +62,7 @@ const startGame = (game, io) => {
     });
 
     P_ONE.on('choice', (data) => {
-        choices[1] = data['choices'];
+        choices[1] = data['choice'];
     });
 
     setTimeout(() => {
@@ -42,11 +88,24 @@ const startGame = (game, io) => {
             else verdict = 1;
         }
 
+        // Update player stats
+
+        if (verdict === 0) {
+            handleStatsUpdate(game['players'][0]['username'], game['players'][1]['username']);
+        }
+        if (verdict === 1) {
+            handleStatsUpdate(game['players'][1]['username'], game['players'][0]['username']);
+        }
+
+        if (process.env.NODE_ENV === 'development') {
+            console.log(`Game ${game['id']} verdict ${verdict}.`);
+        }
+
         // Send verdict
         io.to(game['id']).emit('finish', {
             verdict: verdict
         });
-    }, 15000);
+    }, 12000);
 };
 
 export default startGame;
