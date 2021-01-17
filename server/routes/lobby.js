@@ -40,22 +40,23 @@ class Game {
 const checkAuthMiddleware = (req, res, next) => {
     let header = req.header('Authorization');
     if (typeof header !== 'string') {
-        res.sendStatus(401);
+        res.status(401).end();
     }
     let split = header.split(' ');
     if (split.length < 2) {
-        res.sendStatus(401);
+        res.status(401).end();
     }
     try {
         let user = jwt.verify(split[1], publicKey);
         req.user = user;
         next();
     } catch (err) {
-        res.sendStatus(401);
+        res.status(401).end();
     }
 };
 
 // TODO: implement join time limit. If limit passes, put game into openGames again.
+// TODO: implement selfGuard
 router.get('/join', checkAuthMiddleware, (req, res) => {
     if (openGames.length !== 0) {
         let top = openGames.pop();

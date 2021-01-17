@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 const Navigation = () => {
     let status = useAuthStatus();
     let authButton;
+    let profile;
     switch (status) {
         case null:
             break;
@@ -16,6 +17,7 @@ const Navigation = () => {
                     <Link to="/login">Login</Link>
                 </nav>
             );
+            profile = null;
             break;
         case true:
             authButton = (
@@ -25,6 +27,11 @@ const Navigation = () => {
                     }}>
                         Logout
                     </a>
+                </nav>
+            );
+            profile = (
+                <nav className="navigation-item">
+                    <Link to="/profile">Profile</Link>
                 </nav>
             );
             break;
@@ -43,7 +50,11 @@ const Navigation = () => {
             <nav className="navigation-item">
                 <Link to="/">Home</Link>
             </nav>
+            <nav className="navigation-item">
+                <Link to="/leaderboard">Leaderboard</Link>
+            </nav>
             {authButton}
+            {profile}
         </div>
     );
 };
