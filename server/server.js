@@ -4,6 +4,7 @@ import fs from 'fs';
 import path from 'path';
 import auth from './routes/auth';
 import lobby from './routes/lobby';
+import data from './routes/data';
 import pool from './db/connection';
 import test from './db/test';
 import http from 'http';
@@ -23,6 +24,7 @@ app.use(express.static(path.join(__dirname, '..', 'client', 'build', 'static')))
 
 app.use('/auth', auth);
 app.use('/lobby', lobby);
+app.use('/data', data);
 
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '..', 'client', 'build', 'index.html'));
@@ -49,26 +51,49 @@ if (process.env.NODE_ENV === 'development') {
     });
 }
 
+// TODO: add specific messages when fail to join (ie. game is full vs error)
 io.on('connection', (socket) => {
+    let currentGame;
+
+    socket.on('disconnect', () => {
+        try {
+            if (currentGame['players'].length < 2) {
+                currentGame.removeGame();
+            }
+        } catch (err) {
+            // Do nothing
+        }
+
+    });
+
     socket.on('join', (data) => {
         // Try to get user information from token
         try {
             let { token, gameId } = data;
-            if (games[gameId]) {
+            if (games[gameId] && games[gameId]['players'].length < 2) {
                 let user = jwt.verify(token, publicKey);
-
+                let { username } = user;
+                let game = games[gameId];
+                currentGame = game;
+                game.players.push(user);
+                game.sockets.push(socket);
                 // Make socket join game room
                 socket.join(gameId);
-
                 socket.emit('join', {
                     status: true,
+                    username: username
                 });
-
-                let game = games[gameId];
-                game.sockets.push(socket);
                 if (game['players'].length === 2) {
                     // Can start the game
                     startGame(game, io);
+
+                    // TODO: find a better way to clean this up
+                    // Clean up openGames
+                    for (let i = openGames.length - 1; i >= 0; i--) {
+                        if (openGames[i]['players'].length === 2) {
+                            openGames.splice(i, 1);
+                        }
+                    }
                 }
             } else {
                 socket.emit('join', {

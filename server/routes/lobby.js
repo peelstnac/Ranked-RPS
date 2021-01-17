@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import fs from 'fs';
 import path from 'path';
 import jwt from 'jsonwebtoken';
-import { openGames, games } from '../server';
+import { openGames, fullGames, games } from '../server';
 
 const router = express.Router();
 
@@ -15,6 +15,25 @@ class Game {
         this.id = id;
         this.players = players;
         this.sockets = [];
+    }
+    /**
+     * Removes game. Only call when a game has 1 player or when game is finished.
+     * @param {String} username 
+     */
+    removeGame() {
+        delete games[this.id];
+        for (let i = 0; i < openGames.length; i++) {
+            if (this.id === openGames[i]['id']) {
+                openGames.splice(i, 1);
+                break;
+            }
+        }
+        for (let i = 0; i < fullGames.length; i++) {
+            if (this.id === fullGames[i]['id']) {
+                fullGames.splice(i, 1);
+                break;
+            }
+        }
     }
 }
 
@@ -40,16 +59,17 @@ const checkAuthMiddleware = (req, res, next) => {
 router.get('/join', checkAuthMiddleware, (req, res) => {
     if (openGames.length !== 0) {
         let top = openGames.pop();
-        let { user } = req;
-        top.players.push(user);
+        fullGames.push(top);
+        // let { user } = req;
+        // top.players.push(user);
         res.status(200).json({
             gameId: top.id
         });
     } else {
         // Create a new games
         let gameId = uuidv4();
-        let { user } = req;
-        let game = new Game(gameId, [user]);
+        // let { user } = req;
+        let game = new Game(gameId, []);
         games[gameId] = game;
         openGames.push(game);
         res.status(200).json({
