@@ -70,13 +70,26 @@ io.on('connection', (socket) => {
         // Try to get user information from token
         try {
             let { token, gameId } = data;
+
+            let user = jwt.verify(token, publicKey);
+            let { username } = user;
+            // Check for playing with self
+            let selfGuard = false;
+            console.log(games[gameId]);
+            if (games[gameId]['players'].length === 1
+                && games[gameId]['players'][0]['username'] === username) {
+                selfGuard = true;
+            }
+
             if (games[gameId] && games[gameId]['players'].length < 2) {
-                let user = jwt.verify(token, publicKey);
-                let { username } = user;
                 let game = games[gameId];
                 currentGame = game;
-                game.players.push(user);
-                game.sockets.push(socket);
+
+                if (!selfGuard) {
+                    game.players.push(user);
+                    game.sockets.push(socket);
+                }
+
                 // Make socket join game room
                 socket.join(gameId);
                 socket.emit('join', {

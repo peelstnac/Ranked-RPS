@@ -56,6 +56,7 @@ const checkAuthMiddleware = (req, res, next) => {
 };
 
 // TODO: implement join time limit. If limit passes, put game into openGames again.
+// TODO: implement selfGuard
 router.get('/join', checkAuthMiddleware, (req, res) => {
     if (openGames.length !== 0) {
         let top = openGames.pop();
