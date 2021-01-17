@@ -26,7 +26,7 @@ app.use('/auth', auth);
 app.use('/lobby', lobby);
 app.use('/data', data);
 
-app.get('/', (req, res) => {
+app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, '..', 'client', 'build', 'index.html'));
 });
 
