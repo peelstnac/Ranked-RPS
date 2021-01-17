@@ -1,53 +1,35 @@
 import React, { useState, useEffect } from 'react';
-import './Leaderboard.css';
+import './Profile.css';
 import Spinner from '../Spinner/Spinner';
 
-const Leadberboard = () => {
-    let [rows, setRows] = useState(null);
-
+const Profile = () => {
+    let [data, setData] = useState(null);
     useEffect(async () => {
-        setRows(await fetch('/data/leaderboard').then(async (res) => {
+        setData(await fetch('/data/profile', {
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('Ranked RPS Token')
+            }
+        }).then(async (res) => {
             if (res.status !== 200) {
                 return null;
             }
 
             return await res.json();
-        }), []);
-    });
+        }));
+    }, []);
 
     let content;
-    if (!rows) {
+    // Taking CSS from Leaderboard
+    if (!data) {
         content = (
             <div className="leaderboard-spinner-container">
                 <Spinner />
             </div>
         );
     } else {
-        let tb = [];
-        for (let row of rows['rows']) {
-            tb.push(
-                <tr key={row['username']}>
-                    <td>
-                        {row['username']}
-                    </td>
-                    <td>
-                        {row['rating']}
-                    </td>
-                    <td>
-                        {row['wins']}
-                    </td>
-                    <td>
-                        {row['losses']}
-                    </td>
-                </tr>
-            );
-        }
-
         content = (
             <div className="leaderboard-table-container">
-                <p>
-                    Leaderboard
-                </p>
+                <p>Profile</p>
                 <table>
                     <tr>
                         <th>
@@ -63,7 +45,20 @@ const Leadberboard = () => {
                             Losses
                         </th>
                     </tr>
-                    {tb}
+                    <tr>
+                        <td>
+                            {data['username']}
+                        </td>
+                        <td>
+                            {data['rating']}
+                        </td>
+                        <td>
+                            {data['wins']}
+                        </td>
+                        <td>
+                            {data['losses']}
+                        </td>
+                    </tr>
                 </table>
             </div>
         );
@@ -73,7 +68,7 @@ const Leadberboard = () => {
         <div className="leaderboard-container">
             {content}
         </div>
-    )
+    );
 };
 
-export default Leadberboard;
+export default Profile;
