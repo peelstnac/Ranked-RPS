@@ -1,0 +1,15 @@
+.lobby-game-card-contents {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 0.5em;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+.lobby-game-card-contents > p {
+  font-family: "Roboto", monospace;
+  font-size: 48px;
+  color: white;
+}

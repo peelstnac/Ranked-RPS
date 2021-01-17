@@ -1,0 +1,28 @@
+.navigation-container {
+  justify-self: flex-start;
+  display: flex;
+  width: 100%;
+  background-color: var(--blue-5);
+  color: white;
+}
+
+.navigation-item {
+  display: flex;
+  box-sizing: border-box;
+  align-items: center;
+  padding: 0.5em;
+}
+
+.navigation-item a {
+  color: white;
+  font-family: "Roboto", monospace;
+  font-size: 18px;
+  text-decoration: none;
+}
+
+.navigation-title {
+  display: inline-block;
+  margin: 0.5em;
+  font-family: "Roboto", monospace;
+  font-size: 24px;
+}

@@ -1,36 +1,29 @@
 import React from 'react';
+import {
+    Switch,
+    Route
+} from 'react-router-dom';
+import './App.css';
+import Navigation from './Navigation/Navigation';
+import Home from './Home/Home';
+import Authentication from './Authentication/Authentication';
+import Lobby from './Lobby/Lobby';
 
 const App = () => {
     return (
-        <div>
-            <h1 onClick={() => {
-                fetch('/auth/register', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        credentials: {
-                            username: '1',
-                            password: '2'
-                        }
-                    })
-                });
-            }}>Hello World!</h1>
-            <h1 onClick={() => {
-                fetch('/auth/login', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        credentials: {
-                            username: '1',
-                            password: '2'
-                        }
-                    })
-                });
-            }}>Hello World!</h1>
+        <div className="app-container">
+            <Navigation />
+            <Switch>
+                <Route exact path="/">
+                    <Home />
+                </Route>
+                <Route exact path="/login">
+                    <Authentication />
+                </Route>
+                <Route path="/lobby/:gameId">
+                    <Lobby />
+                </Route>
+            </Switch>
         </div>
     );
 };
