@@ -12,6 +12,21 @@ Every year, enthusiasts gather at the [Rock Paper Scissors World Championship](h
   <img src="https://i.imgur.com/ow8yNlS.png">
 </p>
 
+Because of the time limit, I mostly went with whatever I was comfortable with.
+
+### Frontend
+
+For the frontend, I used create-react-app. Because most of the website is locked away behind a login screen, it wasn't worth using Next.js for its SEO advantages. In short create-react-app was just simpler to use.
+
+## Backend
+
+In the backend, there is
+
+- A Postgres instance on Google Cloud SQL.
+- Express application on Google Cloud Compute instance.
+
+Authorization is done via JWT as opposed to sessions to lessen the burden on the database.
+
 ## Deployment
 
 **Note: for production, source the .env file.**
