@@ -3,13 +3,20 @@ import { io } from 'socket.io-client';
 import { useParams } from 'react-router-dom';
 import './Lobby.css';
 import Spinner from '../Spinner/Spinner';
+import LobbyGame from './LobbyGame';
+import LobbyWL from './LobbyWL';
 
 let socket;
+let verdict;
+let username;
 let gameData;
+
+
 
 const Lobby = () => {
     let { gameId } = useParams();
-    // Pages are join: attempting to join, fail: cannot join, queue: waiting for opponent, game: in game
+    // Pages are join: attempting to join, fail: cannot join, queue: waiting for opponent, start: in game
+    // ..., verdict: WL page
     let [page, setPage] = useState('join');
     useEffect(() => {
         // Attempt to connect to game with gameId
@@ -21,6 +28,7 @@ const Lobby = () => {
         });
         socket.on('join', (data) => {
             let { status } = data;
+            username = data['username'];
             if (!status) {
                 // TODO: configure fail page
 
@@ -35,6 +43,11 @@ const Lobby = () => {
             gameData = data;
             setPage('start');
         });
+        // Get verdict
+        socket.on('finish', (data) => {
+            verdict = data['verdict'];
+            setPage('verdict');
+        })
     }, []);
 
     let content;
@@ -61,7 +74,18 @@ const Lobby = () => {
             );
             break;
         case 'start':
+            content = <LobbyGame
+                socket={socket}
+                gameData={gameData}
+            />;
             break;
+        case 'verdict':
+            console.log(gameData);
+            content = <LobbyWL
+                verdict={verdict}
+                username={username}
+                gameData={gameData}
+            />;
         case 'default':
 
     }
